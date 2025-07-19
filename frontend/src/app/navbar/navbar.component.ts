@@ -91,7 +91,7 @@ export class NavbarComponent implements OnInit {
     this.mostrarDropdown = false;
     this.termino = '';
     this.postsFiltrados = [];
-    this.router.navigate(['/post', id_post]);
+    this.router.navigate(['/main-layout/post', id_post]);
   }
 
   ocultarDropdownConDelay(): void {

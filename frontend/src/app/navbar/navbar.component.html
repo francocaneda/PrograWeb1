@@ -23,12 +23,12 @@
             </span>
 
         <!-- Mensaje si no está autenticado -->
-        <div *ngIf="!authService.estaAutenticado()" class="dropdown-list disabled" style="position: absolute; width: 100%; background: #f8d7da; color: #842029; padding: 8px; border-radius: 4px; top: 100%; z-index: 100;">
+        <div *ngIf="!estaAutenticado" class="dropdown-list disabled" style="position: absolute; width: 100%; background: #f8d7da; color: #842029; padding: 8px; border-radius: 4px; top: 100%; z-index: 100;">
           Debes iniciar sesión para buscar publicaciones.
         </div>
 
         <!-- Lista de resultados solo si autenticado y mostrarDropdown activo -->
-        <ul *ngIf="mostrarDropdown && authService.estaAutenticado()" class="dropdown-list" style="position: absolute; width: 100%; top: 100%; z-index: 100;">
+        <ul *ngIf="mostrarDropdown && estaAutenticado" class="dropdown-list" style="position: absolute; width: 100%; top: 100%; z-index: 100;">
           <li *ngFor="let post of postsFiltrados" (mousedown)="irAlPost(post.id_post)" class="dropdown-item">
             {{ post.titulo }}
           </li>

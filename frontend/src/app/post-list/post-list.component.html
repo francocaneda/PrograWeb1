@@ -46,22 +46,24 @@
             <p class="post-preview">{{ post.contenido }}</p>
           </div>
         </div>
+        
         <div class="post-stats">
+          <button 
+            *ngIf="userRole === 'admin' || userId === post.id_usuario"
+            (click)="eliminarPost(post.id_post); $event.stopPropagation()"
+            class="btn btn-danger btn-sm"
+            style="margin-top: 10px;">
+            Eliminar publicación
+          </button>
           <div class="post-time">
             <span>🕐</span>
-            <span>Última respuesta: {{ post.ultima_respuesta || 'N/A' }} {{ post.id_usuario }}</span>
+            <span>Publicado el: {{ post.fecha_creacion | date:'dd/MM/yyyy' }} </span>
           </div>
         </div>
       </a>
 
       <!-- Botón Eliminar fuera del enlace para evitar navegación -->
-      <button 
-        *ngIf="userRole === 'admin' || userId === post.id_usuario"
-        (click)="eliminarPost(post.id_post); $event.stopPropagation()"
-        class="btn btn-danger btn-sm"
-        style="margin-top: 10px;">
-        Eliminar publicación
-      </button>
+      
 
     </div>
   </div>
