@@ -1,0 +1,118 @@
+<div id="main-wrapper">
+  <div class="header bg-white text-black py-2 shadow-sm">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-light p-0">
+        <div class="w-100 d-flex justify-content-between align-items-center">
+
+          <!-- Logo -->
+          <a [routerLink]="['index']" class="navbar-brand d-flex align-items-center"
+            routerLinkActive="router-link-active">
+            <img src="assets/forob.png" alt="ForoRandomUces Logo" class="img-fluid" style="height: 50px;">
+          </a>
+
+          <!-- Buscador -->
+          <div class="input-group search-area d-none d-md-flex me-3" style="width: 350px; position: relative;">
+            <input type="text" class="form-control" placeholder="Busca una publicación"
+                  [(ngModel)]="termino" 
+                  (input)="buscarPosts()" 
+                  (focus)="mostrarDropdown = true" 
+                  (blur)="ocultarDropdownConDelay()"
+                  tabindex="0" autocomplete="off">
+            <span class="input-group-text bg-light">
+              <i class="bi bi-search"></i>
+            </span>
+
+        <!-- Mensaje si no está autenticado -->
+        <div *ngIf="!authService.estaAutenticado()" class="dropdown-list disabled" style="position: absolute; width: 100%; background: #f8d7da; color: #842029; padding: 8px; border-radius: 4px; top: 100%; z-index: 100;">
+          Debes iniciar sesión para buscar publicaciones.
+        </div>
+
+        <!-- Lista de resultados solo si autenticado y mostrarDropdown activo -->
+        <ul *ngIf="mostrarDropdown && authService.estaAutenticado()" class="dropdown-list" style="position: absolute; width: 100%; top: 100%; z-index: 100;">
+          <li *ngFor="let post of postsFiltrados" (mousedown)="irAlPost(post.id_post)" class="dropdown-item">
+            {{ post.titulo }}
+          </li>
+          <li *ngIf="postsFiltrados.length === 0" class="dropdown-item disabled">
+            No se encontraron publicaciones
+          </li>
+        </ul>
+      </div>
+
+
+          <!-- Botón para publicar un post y ver categorias -->
+
+          <!-- Botones de Categorías y Crear Publicación -->
+          <div class="d-none d-md-flex align-items-center">
+            <button [routerLink]="['category']" class="btn btn-primary fw-semibold me-3"
+              routerLinkActive="router-link-active">
+              <i class="bi bi-list-task me-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd"
+                    d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z" />
+                  <path
+                    d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z" />
+                  <path fill-rule="evenodd"
+                    d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z" />
+                </svg></i> Categorías
+            </button>
+
+            <a [routerLink]="['create-post']" routerLinkActive="router-link-active"
+              class="text-dark fw-semibold me-4 text-decoration-none">
+              <i class="bi bi-plus-lg me-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                  <path
+                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                </svg></i> Crear Publicación
+            </a>
+          </div>
+          <!-- Íconos + Usuario -->
+          <ul class="navbar-nav flex-row align-items-center">
+
+            <!-- Notificaciones -->
+            <li class="nav-item me-3 position-relative">
+              <a class="nav-link" href="#">
+                <i class="bi bi-bell-fill"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                    <path
+                      d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
+                  </svg></i>
+                <span
+                  class="badge bg-primary rounded-circle position-absolute top-0 start-100 translate-middle">0</span>
+              </a>
+            </li>
+
+            <!-- Avatar -->
+            <li class="nav-item dropdown">
+              <a class="nav-link d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                <img [src]="apiUrl + '/' + avatar" alt="User Avatar" class="rounded-circle me-1" width="70" height="40">
+                <div class="d-none d-md-block text-start">
+                  <span class="fw-bold" style="color: #717171;">{{ userNameWeb }}</span><br>
+                  <small class="text-muted">{{ rol }}</small>
+                </div>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li class="botoncitoNavbar"><a [routerLink]="['profile']" class="dropdown-item" routerLinkActive="router-link-active"><i
+                      class="bi bi-person-lines-fill"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                        <path
+                          d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                      </svg></i>  Perfil</a></li>
+                <li class="botoncitoNavbar"><a (click)="cerrarSesion()" class="dropdown-item"><i class="bi bi-box-arrow-left"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                          d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
+                        <path fill-rule="evenodd"
+                          d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
+                      </svg></i>  Logout</a>
+                </li>
+              </ul>
+            </li>
+
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>

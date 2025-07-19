@@ -1,0 +1,89 @@
+<br><br>
+<div class="container">
+    <div class="create-post-container">
+        <div class="create-post-header">
+            <div class="create-post-icon">📝</div>
+            <h1 class="create-post-title">Crear Nueva Publicación</h1>
+            <p class="create-post-subtitle">
+                Comparte tus ideas y genera debates interesantes en la comunidad UCES.
+                Elige una categoría y escribe tu pregunta o tema de discusión.
+            </p>
+        </div>
+        <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="create-post-form">
+
+            <div *ngIf="isLoading" class="loader-container">
+                <div class="loader"></div>
+            </div>
+
+            <div *ngIf="!isLoading">
+
+                <!-- Categoría -->
+                <div class="form-group">
+                    <label class="form-label" for="id_categoria">
+                        <span class="form-label-icon">📂</span> Selecciona una Categoría
+                    </label>
+                    <select class="form-select" id="id_categoria" formControlName="id_categoria" required>
+                    <option value="">Elige una categoría...</option>
+                    <option *ngFor="let categoria of categorias" [value]="categoria.id_categoria">
+                        {{ categoria.nombre_categoria }}
+                    </option>
+                    </select>
+
+                    <div class="error-message"
+                        *ngIf="postForm.get('id_categoria')?.invalid && postForm.get('id_categoria')?.touched">
+                        ⚠️ Por favor selecciona una categoría
+                    </div>
+                </div>
+                <br>
+
+                <!-- Título -->
+                <div class="form-group">
+                    <label class="form-label" for="titulo">
+                        <span class="form-label-icon">✏️</span> Título de tu Publicación
+                    </label>
+                    <input type="text" class="form-input" id="titulo" formControlName="titulo"
+                        placeholder="Titulo de la publicacion" maxlength="150" />
+                    <div class="character-counter">
+                        {{ postForm.get('titulo')?.value?.length || 0 }}/150
+                    </div>
+                    <div class="error-message"
+                        *ngIf="postForm.get('titulo')?.invalid && postForm.get('titulo')?.touched">
+                        ⚠️ El título debe tener entre 10 y 150 caracteres
+                    </div>
+                </div>
+                <br>
+
+                <!-- Contenido -->
+                <div class="form-group">
+                    <label class="form-label" for="contenido">
+                        <span class="form-label-icon">📄</span> Contenido de tu Publicación (Opcional)
+                    </label>
+                    <textarea class="form-textarea" id="contenido" formControlName="contenido"
+                        placeholder="Desarrolla tu tema de conversacion" maxlength="1000"></textarea>
+                    <div class="character-counter">
+                        {{ postForm.get('contenido')?.value?.length || 0 }}/1000
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                        <span class="btn-icon">❌</span> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                        <span class="btn-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                fill="currentColor" class="bi bi-sticky" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 15 8.586V2.5A1.5 1.5 0 0 0 13.5 1zM2 2.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V8H9.5A1.5 1.5 0 0 0 8 9.5V14H2.5a.5.5 0 0 1-.5-.5zm7 11.293V9.5a.5.5 0 0 1 .5-.5h4.293z" />
+                            </svg><i class="bi bi-sticky"></i>
+                        </span> Publicar Posteo
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+<br><br><br>

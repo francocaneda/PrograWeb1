@@ -1,0 +1,7 @@
+:host {
+  display: block; /* Para asegurarte que el host ocupe espacio */
+  background-image: url('/assets/Background.jpg');
+  background-size: cover; /* Ajusta el tamaño para cubrir todo */
+  background-position: center;
+  background-repeat: no-repeat;
+}

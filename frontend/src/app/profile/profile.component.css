@@ -1,0 +1,362 @@
+/* ========================================
+           ESTILOS GENERALES
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           HEADER DEL PERFIL
+        ======================================== */
+        .profile-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(100, 179, 244, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .profile-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            border: 5px solid rgba(100, 179, 244, 0.5);
+            box-shadow: 0 15px 40px rgba(100, 179, 244, 0.4);
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+            display: block;
+        }
+
+        .profile-username {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #64b3f4, #c2e9fb, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-role {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-fullname {
+            font-size: 1.3rem;
+            color: #e2e8f0;
+            margin-bottom: 15px;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ========================================
+           INFORMACIÓN DEL PERFIL
+        ======================================== */
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(100, 179, 244, 0.3);
+            border-color: rgba(100, 179, 244, 0.3);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(100, 179, 244, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #64b3f4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+            color: #64b3f4;
+            margin-right: 10px;
+            filter: drop-shadow(0 2px 5px rgba(100, 179, 244, 0.3));
+        }
+
+        /* ========================================
+           BIOGRAFÍA
+        ======================================== */
+        .biography-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .biography-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(100, 179, 244, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .biography-section:hover::before {
+            opacity: 1;
+        }
+
+        .biography-title {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #64b3f4, #c2e9fb, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .biography-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e2e8f0;
+            text-align: justify;
+        }
+
+        /* ========================================
+           BOTONES DE ACCIÓN
+        ======================================== */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #64b3f4, #c2e9fb);
+            color: #1a1a2e;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(100, 179, 244, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(100, 179, 244, 0.5);
+            background: linear-gradient(135deg, #c2e9fb, #64b3f4);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #ff6b6b, #ffa8a8);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .action-btn.secondary:hover {
+            background: linear-gradient(135deg, #ffa8a8, #ff6b6b);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+        }
+
+        /* ========================================
+           ANIMACIONES
+        ======================================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes profilePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .profile-header {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .profile-info {
+            animation: fadeInUp 0.8s ease forwards 0.2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .biography-section {
+            animation: fadeInUp 0.8s ease forwards 0.4s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .action-buttons {
+            animation: fadeInUp 0.8s ease forwards 0.6s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .profile-avatar:hover {
+            animation: profilePulse 1s ease infinite;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+        ======================================== */
+        @media (max-width: 768px) {
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header {
+                padding: 30px 20px;
+            }
+            
+            .profile-username {
+                font-size: 2rem;
+            }
+            
+            .biography-section {
+                padding: 30px 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .profile-avatar {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .profile-username {
+                font-size: 1.8rem;
+            }
+            
+            .info-card {
+                padding: 20px;
+            }
+        }

@@ -1,0 +1,120 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <form (ngSubmit)="onSubmit(registerForm)" #registerForm="ngForm">
+      <div class="fadeIn first">
+        <h1> Crea Tu Usuario </h1>
+      </div>
+
+      <!-- user_nameweb -->
+      <input type="text" id="userNameWeb" class="fadeIn second" name="userNameWeb" placeholder="Nombre de Usuario"
+        [(ngModel)]="userNameWeb" required #userNameWebInput="ngModel">
+      <div *ngIf="userNameWebInput.invalid && userNameWebInput.touched" class="text-danger">
+        Debe ingresar un nombre de usuario válido.
+      </div>
+
+      <!-- email -->
+      <input type="text" id="email" class="fadeIn second" name="email" placeholder="Email"
+        [(ngModel)]="email" required email #emailInput="ngModel">
+
+      <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger">
+        Debe ingresar un email válido.
+      </div>
+
+      <!-- clave -->
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="Contraseña"
+        [(ngModel)]="clave" required minlength="8" #claveInput="ngModel">
+      <div *ngIf="claveInput.invalid && claveInput.touched" class="text-danger">
+        La contraseña debe tener al menos 8 caracteres.
+      </div>
+
+      <!-- re-password -->
+      <input type="password" id="re-password" class="fadeIn third" name="re-password" placeholder="Reingrese Contraseña"
+        [(ngModel)]="reclave" required [pattern]="clave" #reclaveInput="ngModel">
+      <div *ngIf="reclaveInput.invalid && reclaveInput.touched" class="text-danger">
+        Las contraseñas deben coincidir.
+      </div>
+
+      <!-- nombre -->
+      <input type="text" id="nombre" class="fadeIn second" name="nombre" placeholder="Nombre"
+        [(ngModel)]="nombre" required #nombreInput="ngModel">
+
+      <!-- apellido -->
+      <input type="text" id="apellido" class="fadeIn third" name="apellido" placeholder="Apellido"
+        [(ngModel)]="apellido" required #apellidoInput="ngModel">
+
+<!-- AVATAR PERSONALIZADO -->
+<div class="custom-file-upload fadeIn second" style="margin-top: 15px;">
+  <input type="file"
+         id="avatar"
+         name="avatar"
+         accept="image/*"
+         (change)="onFileSelected($event)"
+         #avatarInput>
+  
+  <label for="avatar" 
+         class="file-upload-label" 
+         [class.has-file]="selectedFileName"
+         [style.border-color]="selectedFileName ? '#64b3f4' : 'rgba(255, 255, 255, 0.3)'"
+         [style.background]="selectedFileName ? 'rgba(100, 179, 244, 0.1)' : 'rgba(255, 255, 255, 0.1)'">
+    
+    <div class="file-upload-icon">{{ selectedFileName ? '✅' : '📁' }}</div>
+    <div class="file-upload-text">
+      <div class="file-upload-main">
+        {{ selectedFileName ? 'Archivo seleccionado' : 'Seleccionar Avatar' }}
+      </div>
+      <div class="file-upload-sub" *ngIf="!selectedFileName">
+        Arrastra una imagen o haz clic para buscar
+      </div>
+      <div class="file-name" *ngIf="selectedFileName">
+        {{ selectedFileName }}
+      </div>
+    </div>
+  </label>
+</div>
+
+<!-- Vista previa -->
+<div class="avatar-preview" 
+     [class.show]="previewUrl" 
+     *ngIf="previewUrl" 
+     style="margin-top: 20px;">
+  <div class="avatar-preview-label">Vista previa del avatar:</div>
+  <img [src]="previewUrl"
+       alt="Avatar seleccionado"
+       class="avatar-preview-img">
+  <div>
+    <button type="button" 
+            class="change-file-btn" 
+            (click)="avatarInput.click()">
+      Cambiar Imagen
+    </button>
+  </div>
+</div>
+
+
+
+      <!-- fecha_nacimiento -->
+      <input type="date" id="fechaNacimiento" class="fadeIn third" name="fechaNacimiento" placeholder="Fecha de Nacimiento"
+        [(ngModel)]="fechaNacimiento" required #fechaNacimientoInput="ngModel">
+      <div *ngIf="fechaNacimientoInput.invalid && fechaNacimientoInput.touched" class="text-danger">
+        Debe ingresar una fecha válida.
+      </div>
+
+      <!-- bio -->
+      <textarea id="bio" class="fadeIn second" name="bio" placeholder="Biografía (opcional)"
+        [(ngModel)]="bio" rows="3" style="resize:none;"></textarea>
+
+
+      <br><br>
+      <input type="submit" class="fadeIn fourth" value="Registrarme" [disabled]="registerForm.invalid || loading" />
+      <br>
+      <div *ngIf="loading" class="spinner-border text-primary" role="status" style="margin-left: 10px;">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </form>
+
+    <div id="formFooter">
+      <br>
+      <a [routerLink]="['../loginscreen']" class="underlineHover" routerLinkActive="router-link-active">Volver a Iniciar Sesion</a>
+    </div>
+  </div>
+</div>

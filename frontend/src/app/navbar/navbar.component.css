@@ -1,0 +1,195 @@
+.header {
+    background-color: #1f1f1f; /* o el color que quieras */
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .navbar-brand span {
+    color: rgb(211, 15, 15);
+    font-size: 1.2rem;
+}
+
+.header-info span,
+.header-info small {
+    line-height: 1;
+}
+
+.search-area .form-control {
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.search-area .input-group-text {
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+    
+    .header-left {
+        display: flex;
+        align-items: center;
+    }
+    .header-info span {
+        display: block;
+        font-size: 0.9em;
+        font-weight: bold;
+    }
+    .header-info small {
+        font-size: 0.8em;
+        color: #6c757d; /* Bootstrap's secondary text color */
+    }
+    /* Adjustments for search input and icons to match the screenshot */
+    .search-area .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .search-area .input-group-append .input-group-text {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        background-color: #e9ecef; /* Light gray background for the icon */
+        border-left: 0;
+    }
+    .search-area .input-group-append a {
+        color: #67636D; /* Icon color from the SVG */
+    }
+    .notification_dropdown .bell-link svg,
+    .notification_dropdown .ai-icon svg {
+        fill: #67636D; /* Standard icon fill color */
+    }
+    .notification_dropdown .badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        padding: .4em .6em;
+        border-radius: 50%;
+        font-size: 0.7em;
+    }
+    /* Campana de notificaciones */
+.nav-link .fa-bell {
+  color: #333;
+}
+
+.badge {
+  font-size: 0.6rem;
+  padding: 4px 6px;
+}
+
+/* Estilo para el buscador */
+.search-area .form-control {
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.search-area .input-group-text {
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.botoncitoNavbar a:hover{
+    cursor: pointer;
+    background-color: #d8d5db;
+    color: rgb(33, 52, 138);
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 1050;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+
+/* Container del buscador */
+.input-group.search-area {
+  width: 350px;
+  position: relative;
+}
+
+/* Input más redondeado y con sombra sutil */
+.input-group.search-area input.form-control {
+  border-radius: 25px;
+  padding-left: 20px;
+  padding-right: 40px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.input-group.search-area input.form-control:focus {
+  box-shadow: 0 0 8px rgba(0,123,255,0.6);
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Ícono de lupa en el input */
+.input-group-text.bg-light {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1.2rem;
+  z-index: 5;
+  padding: 0;
+}
+
+/* Dropdown de resultados */
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 2px;
+  z-index: 1000;
+  list-style: none;
+  padding: 0;
+}
+
+/* Items del dropdown */
+.dropdown-list li.dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-list li.dropdown-item:hover {
+  background-color: #f1f9ff;
+}
+
+/* Item disabled */
+.dropdown-list li.dropdown-item.disabled {
+  color: #999;
+  cursor: default;
+}
+
+/* Scrollbar personalizado para el dropdown */
+.dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 3px;
+}

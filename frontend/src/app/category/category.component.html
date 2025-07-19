@@ -1,0 +1,77 @@
+<div class="categories-container">
+
+  <div class="categories-header">
+    <h1 class="categories-title">Categorías del Foro</h1>
+    <p class="categories-subtitle">
+      Explora las diferentes secciones de nuestro foro y únete a las conversaciones que más te interesen.
+      Cada categoría está diseñada para fomentar debates constructivos y el intercambio de ideas.
+    </p>
+  </div>
+
+  <div *ngIf="isLoading" class="loader-container">
+    <div class="loader"></div>
+  </div>
+
+  <div *ngIf="!isLoading && isAuthenticated" class="categories-grid">
+    <div class="category-card" *ngFor="let categoria of categorias" (click)="cargarPosts(categoria)">
+      
+      <div class="category-header d-flex align-items-center gap-2">
+        <div class="category-icon">📂</div>
+        <h3 class="category-title">{{ categoria.nombre_categoria }}</h3>
+      </div>
+
+      <p class="category-description">
+        Participa en la categoría {{ categoria.nombre_categoria }} y comparte tus ideas con la comunidad.
+      </p>
+
+      <div class="category-stats d-flex gap-3">
+        <div class="category-stat d-flex align-items-center gap-1">
+          <span class="category-stat-icon">📝</span>
+          <span>Posts: {{ categoria.cantidad_posts }}</span>
+        </div>
+        <div class="category-last-post d-flex align-items-center gap-1">
+          <span class="category-last-post-icon">💬</span>
+          <span>Comentarios: {{ categoria.cantidad_comentarios }}</span>
+        </div>
+      </div>
+
+      <!-- Botón eliminar centrado al final -->
+      <div *ngIf="isAdmin" class="boton-eliminar-container">
+        <button 
+          (click)="eliminarCategoria(categoria.id_categoria); $event.stopPropagation();" 
+          class="btn btn-danger btn-sm"
+          title="Eliminar categoría"
+        >
+          🗑️ Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isAdmin" class="crear-categoria-container my-3 p-3 border rounded bg-light d-flex gap-2 align-items-center seccionCrearCategoria">
+    <input 
+      type="text" 
+      [(ngModel)]="nuevoNombreCategoria" 
+      placeholder="Nuevo nombre de categoría" 
+      class="form-control"
+      style="max-width: 300px;"
+    />
+    <button 
+      class="btn btn-primary"
+      (click)="crearCategoria()" 
+      [disabled]="!nuevoNombreCategoria.trim()"
+    >
+      Crear Categoría
+    </button>
+  </div>
+
+  <div *ngIf="!isLoading && !isAuthenticated" class="not-authenticated-message">
+    <p>Debes iniciar sesión para ver las categorías del foro.</p>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  <div *ngIf="mostrarMensaje" class="alert alert-success text-center mensaje-flotante">
+    {{ mensajeExito }}
+  </div>
+
+</div>

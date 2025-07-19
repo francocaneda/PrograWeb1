@@ -1,0 +1,84 @@
+<div class="category-posts-container" *ngIf="!isLoading; else cargando">
+  <!-- Breadcrumb + Header -->
+  <div class="category-header">
+    <div class="category-breadcrumb">
+      <a routerLink="/" class="breadcrumb-link">Foro</a>
+      <span class="breadcrumb-separator">›</span>
+      <a routerLink="/categorias" class="breadcrumb-link">Categorías</a>
+      <span class="breadcrumb-separator">›</span>
+      <span>Publicaciones</span>
+    </div>
+
+    <div class="category-info">
+      <div class="category-icon">📂</div>
+      <div class="category-details">
+        <h1>{{ nombreCategoria }} - Publicaciones</h1>
+        <p class="category-description">
+          Explorá las publicaciones recientes de esta categoría y sumate a la conversación.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="posts-actions">
+    <button class="create-post-btn" [routerLink]="['/main-layout/create-post']" [queryParams]="{ categoria: idCategoria }">
+      <span>➕</span> Crear Nueva Publicación
+    </button>
+
+    <div class="posts-filter">
+      <select class="filter-select" disabled>
+        <option value="recent">Más recientes</option>
+      </select>
+      <select class="filter-select" disabled>
+        <option value="all">Todos los posts</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Lista de publicaciones -->
+  <div *ngIf="posts.length > 0; else sinPosts" class="posts-list">
+    <div class="post-card" *ngFor="let post of posts">
+      <a [routerLink]="['/main-layout/post', post.id_post]" class="post-link">
+        <div class="post-header">
+          <div class="post-main-info">
+            <h3 class="post-title">{{ post.titulo }}</h3>
+            <p class="post-preview">{{ post.contenido }}</p>
+          </div>
+        </div>
+        <div class="post-stats">
+          <div class="post-time">
+            <span>🕐</span>
+            <span>Última respuesta: {{ post.ultima_respuesta || 'N/A' }} {{ post.id_usuario }}</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Botón Eliminar fuera del enlace para evitar navegación -->
+      <button 
+        *ngIf="userRole === 'admin' || userId === post.id_usuario"
+        (click)="eliminarPost(post.id_post); $event.stopPropagation()"
+        class="btn btn-danger btn-sm"
+        style="margin-top: 10px;">
+        Eliminar publicación
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Botón Cargar Más -->
+  <button class="load-more-btn" disabled>Cargar más posts</button>
+
+</div>
+
+<!-- Loader -->
+<ng-template #cargando>
+  <div class="loader-container">
+    <div class="loader"></div>
+  </div>
+</ng-template>
+
+<!-- Sin posts -->
+<ng-template #sinPosts>
+  <p class="text-muted">Aún no hay publicaciones en esta categoría.</p>
+</ng-template>

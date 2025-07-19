@@ -1,0 +1,63 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+      <div class="fadeIn first">
+        <h1> Iniciar Sesion</h1>
+      </div>
+
+    <!-- Icon -->
+    <div class="fadeIn first">
+      <img src="assets/Access.ico" id="icon" alt="User Icon" />
+    </div>
+
+    <!-- Login Form -->
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <input type="text" id="login" class="fadeIn second"  [(ngModel)]="email" name="login"  #emailInput="ngModel" placeholder="Email o Nombre de Usuario" required email #userNameInput="ngModel">
+
+        <div *ngIf="emailInput.invalid && emailInput.touched" style="color:red;">
+        El email es obligatorio y debe ser válido.
+      </div>
+
+
+      <input type="password" id="password" class="fadeIn third" [(ngModel)]="clave" name="clave" #claveInput="ngModel" placeholder="Contraseña" required minlength="8" #passwordInput="ngModel">
+
+            <div *ngIf="claveInput.invalid && claveInput.touched" style="color:red;">
+        La contraseña es obligatoria.
+      </div>
+
+      <input
+    type="submit"
+    class="fadeIn fourth"
+    [disabled]="loginForm.invalid || loading"
+    value="Ingresar"
+  />
+
+  <!-- Spinner debajo del botón -->
+  <div *ngIf="loading" class="mt-2 text-center">
+    <div
+      class="spinner-border text-primary"
+      role="status"
+      style="width: 1.5rem; height: 1.5rem;"
+    >
+      <span class="sr-only">Cargando...</span>
+    </div>
+  </div>
+
+    </form>
+
+<div id="formFooter">
+  <a [routerLink]="['/password-recup']" class="underlineHover" href="#">¿Olvidó Su contraseña?</a>
+  <br><br>
+  <a  [routerLink]="['/registrarte']" class="underlineHover"  routerLinkActive="router-link-active" >Registrarse</a>
+</div>
+
+
+  </div>
+</div>

@@ -1,0 +1,1 @@
+{"avatar":{"name":"fotoprueba.jpg","full_path":"fotoprueba.jpg","type":"image\/jpeg","tmp_name":"C:\\xampp\\tmp\\php11A4.tmp","error":0,"size":23380}}
