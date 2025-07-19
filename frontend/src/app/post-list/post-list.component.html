@@ -39,38 +39,34 @@
   <!-- Lista de publicaciones -->
   <div *ngIf="posts.length > 0; else sinPosts" class="posts-list">
     <div class="post-card" *ngFor="let post of posts">
-      <a [routerLink]="['/main-layout/post', post.id_post]" class="post-link">
-        <div class="post-header">
+      <div class="post-header">
+        <a [routerLink]="['/main-layout/post', post.id_post]" class="post-link">
           <div class="post-main-info">
             <h3 class="post-title">{{ post.titulo }}</h3>
             <p class="post-preview">{{ post.contenido }}</p>
           </div>
-        </div>
-        
-        <div class="post-stats">
-          <button 
-            *ngIf="userRole === 'admin' || userId === post.id_usuario"
-            (click)="eliminarPost(post.id_post); $event.stopPropagation()"
-            class="btn btn-danger btn-sm"
-            style="margin-top: 10px;">
-            Eliminar publicación
-          </button>
-          <div class="post-time">
-            <span>🕐</span>
-            <span>Publicado el: {{ post.fecha_creacion | date:'dd/MM/yyyy' }} </span>
-          </div>
-        </div>
-      </a>
+        </a>
+      </div>
 
-      <!-- Botón Eliminar fuera del enlace para evitar navegación -->
-      
+      <div class="post-stats d-flex justify-content-between align-items-center">
+        <div class="post-time">
+          <span>🕐</span>
+          <span>Publicado el: {{ post.fecha_creacion | date:'dd/MM/yyyy' }}</span>
+        </div>
 
+        <!-- Botón Eliminar -->
+        <button 
+          *ngIf="userRole === 'admin' || userId === post.id_usuario"
+          (click)="eliminarPost(post.id_post)"
+          class="btn btn-danger btn-sm">
+          🗑️ Eliminar publicación
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Botón Cargar Más -->
   <button class="load-more-btn" disabled>Cargar más posts</button>
-
 </div>
 
 <!-- Loader -->

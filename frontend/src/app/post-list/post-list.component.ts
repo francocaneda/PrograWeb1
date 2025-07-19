@@ -11,6 +11,7 @@ import { AuthService } from '../auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http'; 
 import { UserService } from '../user.service';// 👈 Agregado
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post-list',
@@ -36,6 +37,8 @@ export class PostListComponent implements OnInit {
     private authService: AuthService,
     private http: HttpClient,
     private userService: UserService, // 👈 Agregado
+    private router: Router,
+    
   ) {}
 
   ngOnInit(): void {
@@ -111,6 +114,27 @@ cargarPosts(): void {
   });
 }
 
+
+/*eliminarPost(id_post: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.authService.getToken()
+    });
+
+    const body = { id_post: id_post };
+
+    this.http.post('http://localhost:8012/miproyecto/api/index.php?comando=deletePost', body, { headers })
+      .subscribe({
+        next: (respuesta: any) => {
+          console.log('Post eliminado:', respuesta);
+          this.cargarPosts(); // Recargar la lista
+          this.router.navigate(['/main-layout/index']);
+        },
+        error: (error) => {
+          console.error('Error al eliminar el post: ', error);
+        }
+      });
+  }*/
 
 eliminarPost(id_post: number) {
   Swal.fire({
