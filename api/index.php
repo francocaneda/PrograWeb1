@@ -364,7 +364,7 @@ function getUsuariologueado()
 
     // Obtener usuario por ID desde el payload
     $idUsuario = mysqli_real_escape_string($db, $payload->uid);
-    $sql = "SELECT id, user_nameweb, email, nombre_completo, avatar, fecha_nacimiento, bio, rol FROM usuarios WHERE id = '$idUsuario'";
+    $sql = "SELECT id, user_nameweb, email, nombre_completo, avatar, fecha_nacimiento, bio, rol, fecha_registro FROM usuarios WHERE id = '$idUsuario'";
     $result = mysqli_query($db, $sql);
 
     if (!$result || mysqli_num_rows($result) === 0) {
@@ -389,6 +389,7 @@ function getUsuariologueado()
         'fecha_nacimiento' => $usuario['fecha_nacimiento'],
         'bio' => $usuario['bio'],
         'rol' => $usuario['rol'],
+        'fecha_registro' => $usuario['fecha_registro'],
     ];
 
     output(['usuario' => $usuarioAuth]);
@@ -783,6 +784,7 @@ function getUsuariosAntiguos()
     $db = conectarBD();
     $sql = "SELECT id, nombre_completo, fecha_registro, avatar 
             FROM usuarios 
+            WHERE rol != 'admin'
             ORDER BY fecha_registro ASC 
             LIMIT 3";
 

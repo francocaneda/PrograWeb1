@@ -26,23 +26,16 @@
       <span>➕</span> Crear Nueva Publicación
     </button>
 
-    <div class="posts-filter">
-      <select class="filter-select" disabled>
-        <option value="recent">Más recientes</option>
-      </select>
-      <select class="filter-select" disabled>
-        <option value="all">Todos los posts</option>
-      </select>
-    </div>
+
   </div>
 
   <!-- Lista de publicaciones -->
   <div *ngIf="posts.length > 0; else sinPosts" class="posts-list">
     <div class="post-card" *ngFor="let post of posts">
-      <div class="post-header">
-        <a [routerLink]="['/main-layout/post', post.id_post]" class="post-link">
+      <div class="post-header" [routerLink]="['/main-layout/post', post.id_post]">
+        <a class="post-link">
           <div class="post-main-info">
-            <h3 class="post-title">{{ post.titulo }}</h3>
+            <h3 class="post-title">Título: {{ post.titulo }}</h3>
             <p class="post-preview">{{ post.contenido }}</p>
           </div>
         </a>
@@ -65,8 +58,6 @@
     </div>
   </div>
 
-  <!-- Botón Cargar Más -->
-  <button class="load-more-btn" disabled>Cargar más posts</button>
 </div>
 
 <!-- Loader -->

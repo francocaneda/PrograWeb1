@@ -14,6 +14,7 @@ interface Usuario {
   fecha_nacimiento: string;
   bio: string;
   rol: string;
+  fecha_registro: string;
 }
 
 @Injectable({

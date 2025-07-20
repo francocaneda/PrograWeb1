@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../user.service';  // Asegurate de que la ruta sea correcta
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -19,11 +20,12 @@ export class ProfileComponent implements OnInit {
   fechaNacimiento = '';
   bio = '';
   rol = '';
+  fechaRegistro = '';
 
   apiUrl = 'http://localhost:8012/miproyecto/api';
 
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     this.cargarUsuario();
@@ -44,10 +46,15 @@ export class ProfileComponent implements OnInit {
         this.fechaNacimiento = res.fecha_nacimiento || '';
         this.bio = res.bio || '';
         this.rol = res.rol || '';
+        this.fechaRegistro = res.fecha_registro || '';
       },
       error: (err) => {
         console.error('Error al obtener datos del usuario (profile):', err);
       }
     });
   }
+
+  irCambiarContrasena() {
+  this.router.navigate(['/password-recup']);
+}
 }
