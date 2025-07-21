@@ -9,7 +9,7 @@ import { take } from 'rxjs';
 import { CategoryService } from '../category.service';
 import { AuthService } from '../auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http'; 
-import { UserService } from '../user.service';// 👈 Agregado
+import { UserService } from '../user.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 

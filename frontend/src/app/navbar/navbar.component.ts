@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http'; 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
 
   userNameWeb = '';
   email = '';
@@ -26,45 +26,65 @@ export class NavbarComponent implements OnInit {
   mostrarDropdown: boolean = false;
   postsFiltrados: any[] = [];
 
+  mostrarNotificaciones = false;
+  notificaciones: any[] = [];
+
   apiUrl = 'http://localhost:8012/miproyecto/api';
 
+  private onClickOutsideHandler: any;
+
   constructor(
-    private userService: UserService, 
-    private authService: AuthService,  // privado
-    private router: Router, 
-    private http: HttpClient
-  ) {}
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router,
+    private http: HttpClient,
+    private elementRef: ElementRef
+  ) { }
 
   ngOnInit(): void {
     this.userService.getUsuario().subscribe({
       next: (res) => {
-        console.log('Respuesta del backend (navbar):', res);  // Debug
+        if (!res) return;
 
-        const usuario = res;
-        if (!usuario) return;
-
-        this.userNameWeb = usuario.user_nameweb || '';
-        this.email = usuario.email || '';
-        this.nombre = usuario.nombre || '';
-        this.avatar = usuario.avatar || '';
-        this.rol = usuario.rol || '';
+        this.userNameWeb = res.user_nameweb || '';
+        this.email = res.email || '';
+        this.nombre = res.nombre || '';
+        this.avatar = res.avatar || '';
+        this.rol = res.rol || '';
       },
       error: (err) => {
         console.error('Error al obtener el usuario desde UserService (navbar):', err);
       }
+      
+      
     });
+
+    this.cargarNotificaciones();
+
+    // Guardamos el handler para luego poder removerlo
+    this.onClickOutsideHandler = this.onClickOutside.bind(this);
+    document.addEventListener('click', this.onClickOutsideHandler);
   }
 
-  // Getter público para usar en el template
+  ngOnDestroy(): void {
+    // Removemos el listener usando la misma referencia
+    document.removeEventListener('click', this.onClickOutsideHandler);
+  }
+
+  onClickOutside(event: MouseEvent): void {
+    if (this.mostrarNotificaciones && !this.elementRef.nativeElement.contains(event.target)) {
+      this.mostrarNotificaciones = false;
+    }
+  }
+
   get estaAutenticado(): boolean {
     return this.authService.estaAutenticado();
   }
 
   cerrarSesion(): void {
     this.authService.logout();
-    this.userService.limpiarUsuario(); // Limpia los datos del usuario
-    console.log('Sesión cerrada y datos de usuario limpiados');
-    this.router.navigate(['/loginscreen']); // Redirige a login o donde corresponda
+    this.userService.limpiarUsuario();
+    this.router.navigate(['/loginscreen']);
   }
 
   buscarPosts(): void {
@@ -75,7 +95,7 @@ export class NavbarComponent implements OnInit {
     }
     this.mostrarDropdown = true;
 
-    this.http.get<{posts: any[]}>(`${this.apiUrl}/index.php?comando=buscarPosts&query=${encodeURIComponent(this.termino)}`)
+    this.http.get<{ posts: any[] }>(`${this.apiUrl}/index.php?comando=buscarPosts&query=${encodeURIComponent(this.termino)}`)
       .subscribe({
         next: (res) => {
           this.postsFiltrados = res.posts || [];
@@ -99,4 +119,87 @@ export class NavbarComponent implements OnInit {
       this.mostrarDropdown = false;
     }, 200);
   }
+
+  toggleNotificaciones(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mostrarNotificaciones = !this.mostrarNotificaciones;
+    if (this.mostrarNotificaciones) {
+      this.cargarNotificaciones();
+    }
+  }
+
+  cargarNotificaciones(): void {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.notificaciones = [];
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<{ notificaciones: any[] }>(`${this.apiUrl}/index.php?comando=getNotificaciones`, { headers })
+      .subscribe({
+        next: (res) => {
+          console.log('Notificaciones recibidas:', res.notificaciones);
+          this.notificaciones = res.notificaciones || [];
+        },
+        error: (err) => {
+          console.error('Error al cargar notificaciones:', err);
+          this.notificaciones = [];
+        }
+      });
+  }
+
+  marcarComoLeida(noti: any): void {
+    if (noti.leido === '1' || noti.leido === 1) {
+      return; // Ya está marcada como leída
+    }
+
+    const token = this.authService.getToken();
+    if (!token) return;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.patch(
+      `${this.apiUrl}/index.php?comando=Notificaciones`,
+      { id_notificacion: noti.id_notificacion },
+      { headers }
+    ).subscribe({
+      next: () => {
+        noti.leido = '1'; // Actualizamos estado local
+        // Actualizamos la lista para refrescar el binding
+        this.notificaciones = this.notificaciones.map(n => n.id_notificacion === noti.id_notificacion ? noti : n);
+      },
+      error: (err) => {
+        console.error('Error al marcar notificación como leída:', err);
+      }
+    });
+  }
+
+  get cantidadNotificacionesNuevas(): number {
+    return this.notificaciones.filter(n => n.leido === '0' || n.leido === 0).length;
+  }
+
+
+
+
+  irAlPostDesdeNotificacion(noti: any): void {
+  const id_post = noti.id_post;
+
+  this.marcarComoLeida(noti);
+
+  if (id_post) {
+    this.router.navigate(['/main-layout/post', id_post]);
+    this.mostrarNotificaciones = false;
+  } else {
+    console.warn('No se encontró el ID del post en la notificación:', noti);
+  }
+}
+
+
 }
