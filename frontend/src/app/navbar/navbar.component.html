@@ -54,31 +54,27 @@
       <!-- User Section -->
       <div class="user-section">
         <!-- Notifications -->
-      <div class="notification-container">
+        <div class="notification-container">
           <button class="notification-btn" (click)="toggleNotificaciones($event)">
             <i class="bi bi-bell-fill"></i>
             <span *ngIf="cantidadNotificacionesNuevas > 0" class="notification-badge">
               {{ cantidadNotificacionesNuevas }}
             </span>
+
           </button>
 
           <div class="notification-dropdown" [class.show]="mostrarNotificaciones">
             <h6 class="notification-header">Notificaciones</h6>
-
             <div *ngIf="notificaciones.length === 0" class="no-notifications">
               Sin notificaciones
             </div>
-
-            <div *ngFor="let noti of notificaciones"
-                class="notification-item"
-                [class.notification-new]="noti.leido === '0' || noti.leido === 0"
-                (click)="irAlPostDesdeNotificacion(noti)">
+            <div *ngFor="let noti of notificaciones" class="notification-item"
+              [class.notification-new]="noti.leido === '0' || noti.leido === 0" (click)="marcarComoLeida(noti)">
               <div class="notification-message">
                 {{ noti.usuario_origen }}: {{ noti.mensaje }}
               </div>
               <div class="notification-date">{{ noti.fecha_envio | date:'short' }}</div>
             </div>
-
           </div>
         </div>
 
@@ -101,12 +97,19 @@
                 Perfil
               </a>
             </li>
+             <li>
+              <a class="dropdown-item modern-dropdown-item text-danger botonAdmin" *ngIf="esAdmin()" [routerLink]="['/main-layout/admin-panel']" routerLinkActive="active">
+                <i class="bi bi-person-lines-fill"></i>
+                Panel de usuarios
+              </a>
+            </li>
             <li>
               <a (click)="cerrarSesion()" class="dropdown-item modern-dropdown-item">
                 <i class="bi bi-box-arrow-left"></i>
                 Logout
               </a>
             </li>
+           
           </ul>
         </div>
       </div>

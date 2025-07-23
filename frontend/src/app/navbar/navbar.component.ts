@@ -6,11 +6,12 @@ import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -185,21 +186,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return this.notificaciones.filter(n => n.leido === '0' || n.leido === 0).length;
   }
 
-
-
-
-  irAlPostDesdeNotificacion(noti: any): void {
-  const id_post = noti.id_post;
-
-  this.marcarComoLeida(noti);
-
-  if (id_post) {
-    this.router.navigate(['/main-layout/post', id_post]);
-    this.mostrarNotificaciones = false;
-  } else {
-    console.warn('No se encontró el ID del post en la notificación:', noti);
-  }
+    esAdmin(): boolean {
+  return this.authService.getRol() === 'admin';
 }
-
 
 }

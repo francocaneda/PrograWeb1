@@ -1,4 +1,3 @@
-<br>
 <div class="container">
     <!-- Header del Perfil -->
     <div class="profile-header">
@@ -35,7 +34,7 @@
         <div class="info-card">
             <div class="info-label">
                 <span class="info-icon"><i class="bi bi-calendar-heart"></i></span>
-                Miembro desde el: {{ fechaRegistro | date:'shortDate' }}
+                Miembro desde {{ formatFechaLarga(fechaRegistro) }}
             </div>
             <div class="info-value" id="userJoinDate"></div>
         </div>
@@ -60,7 +59,7 @@
 
     <!-- Botones de Acción -->
     <div class="action-buttons">
-        <button class="action-btn" onclick="editProfile()">
+        <button class="action-btn" (click)="irEditarPerfil()">
             <span>✏️</span>
             Editar Perfil.
         </button>
@@ -68,9 +67,47 @@
             <span>🔒</span>
             Cambiar Contraseña
         </button>
-        <button class="action-btn" onclick="viewSettings()">
+        <button class="action-btn" (click)="viewSettings()">
             <span>⚙️</span>
             Configuración
         </button>
     </div>
+
+    <!-- Modal de Configuración -->
+    <div class="settings-modal" [class.show]="showSettings" *ngIf="showSettings">
+        <div class="settings-overlay" (click)="closeSettings()"></div>
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 class="settings-title">🎨 Personalizar Apariencia</h2>
+                <button class="close-btn" (click)="closeSettings()">&times;</button>
+            </div>
+            
+            <div class="settings-body">
+                <h3 class="section-title">Temas Predefinidos</h3>
+                <div class="theme-grid">
+                    <div class="theme-option" 
+                         *ngFor="let theme of themes; let i = index"
+                         [class.active]="currentTheme === theme.config"
+                         (click)="selectTheme(theme.config)">
+                        <div class="theme-preview" [style.background]="theme.config.background">
+                            <div class="theme-preview-card" [style.backgroundColor]="theme.config.cardColor">
+                                <div class="theme-preview-text" [style.color]="theme.config.textColor">Aa</div>
+                                <div class="theme-preview-accent" [style.backgroundColor]="theme.config.accentColor"></div>
+                            </div>
+                        </div>
+                        <span class="theme-name">{{ theme.name }}</span>
+                    </div>
+                </div>
+                
+                <div class="settings-actions">
+                    <button class="reset-btn" (click)="resetToDefault()">
+                        <span>🔄</span>
+                        Restablecer Predeterminado
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <br><br><br>
+</div>

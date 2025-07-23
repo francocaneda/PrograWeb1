@@ -3,8 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { map } from 'rxjs/operators';
 
-interface Usuario {
+export interface Usuario {
   id: number;
   user_nameweb: string;
   email: string;
@@ -84,4 +85,38 @@ getUsuariosAntiguos(): Observable<any> {
   getTotalComentarios(): Observable<{ total_comentarios: number }> {
     return this.http.get<{ total_comentarios: number }>(`${this.apiUrl}/index.php?comando=totalComentarios`);
   }
+
+// Dentro de UserService
+
+getUsuarios(): Observable<Usuario[]> {
+  const token = this.authService.getToken();
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+
+  return this.http.get<{ usuarios: Usuario[] }>(`${this.apiUrl}/index.php?comando=getUsuarios`, { headers })
+    .pipe(
+      map(response => response.usuarios)
+    );
+}
+
+
+eliminarUsuario(id_usuario: number): Observable<any> {
+  const token = this.authService.getToken();
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+
+  return this.http.post(`${this.apiUrl}/index.php?comando=eliminarUsuario`, { id_usuario }, { headers })
+    .pipe(
+      catchError(err => {
+        console.error('Error en eliminarUsuario:', err);
+        throw err;
+      })
+    );
+}
+
+
+
 }

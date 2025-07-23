@@ -11,29 +11,38 @@ import { CategoryComponent } from './category/category.component';
 import { CreatePostComponent } from './create-post/create-post.component';
 import { PostListComponent } from './post-list/post-list.component';
 import { PostDetailComponent } from './post-detail/post-detail.component';
+import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component'; // 👈 Agregado
+import { AdminGuard } from './auth/admin.guard';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';  // 👈 Agregado (si tenés uno)
 
 export const routes: Routes = [
   {
     path: 'main-layout',
     component: MainLayoutComponent,
     children: [
-
-        // Rutas hijas que usan el layout principal con navbar y footer
+      // Rutas hijas que usan el layout principal con navbar y footer
       { path: 'index', component: IndexForoComponent },
-      { path: 'profile', component: ProfileComponent},
+      { path: 'profile', component: ProfileComponent },
       { path: 'category', component: CategoryComponent },
       { path: 'create-post', component: CreatePostComponent },
-      {path: 'categorias/:id', component: PostListComponent},
-      { path: 'post/:id', component: PostDetailComponent }
+      { path: 'categorias/:id', component: PostListComponent },
+      { path: 'post/:id', component: PostDetailComponent },
 
+      // 👉 Ruta para admin (con guard opcional)
+      {
+        path: 'admin-usuarios',
+        component: AdminUsuariosComponent,
+        canActivate: [AdminGuard] // 👈 Protege para que solo el admin pueda entrar
+      },
+      { path: 'admin-panel', component: AdminPanelComponent, canActivate: [AdminGuard] }
     ],
   },
   {
     path: '',
-    component: AuthlayoutComponent, // Rutas que solo usan el footer 
+    component: AuthlayoutComponent, // Rutas que solo usan el footer
     children: [
       { path: 'loginscreen', component: LoginComponent },
-      { path: '', redirectTo: 'loginscreen', pathMatch: 'full' }, // Redirige a loginscreen por defecto
+      { path: '', redirectTo: 'loginscreen', pathMatch: 'full' },
       { path: 'registrarte', component: RegisUserComponent },
       { path: 'password-recup', component: PasswordRecupComponent },
       { path: 'passwordRecup-page', component: PasswordRecupPageComponent },

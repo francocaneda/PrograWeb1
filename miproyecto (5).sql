@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-07-2025 a las 18:36:48
+-- Tiempo de generación: 21-07-2025 a las 04:16:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -37,6 +37,7 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`id_categoria`, `nombre_categoria`) VALUES
+(11, 'categoria de prueba'),
 (4, 'Deportes'),
 (3, 'Educación'),
 (1, 'Entretenimiento'),
@@ -94,7 +95,14 @@ INSERT INTO `comentarios` (`id_comentario`, `contenido`, `fecha_comentario`, `id
 (43, 'me autocontesto', '2025-07-17 23:10:56', 10, 26, NULL),
 (44, 'me autorespondo', '2025-07-17 23:11:04', 10, 26, 43),
 (45, 'jnsfjnszifisafksdjgs', '2025-07-17 23:27:03', 2, 1, NULL),
-(48, 'funciona', '2025-07-18 16:31:06', 8, 26, NULL);
+(48, 'funciona', '2025-07-18 16:31:06', 8, 26, NULL),
+(49, 'hola', '2025-07-18 16:50:54', 9, 26, NULL),
+(50, 'como estas', '2025-07-18 16:50:58', 9, 26, NULL),
+(51, 'vos decis ?', '2025-07-19 21:39:24', 1, 26, 12),
+(52, 'hola', '2025-07-20 22:26:16', 2, 1, NULL),
+(53, 'Este es un comentario de prueba', '2025-07-21 00:45:30', 1, 26, NULL),
+(65, 'algo', '2025-07-21 02:08:17', 16, 26, NULL),
+(66, 'respondio', '2025-07-21 02:13:53', 16, 1, 65);
 
 -- --------------------------------------------------------
 
@@ -116,7 +124,12 @@ CREATE TABLE `likes_post` (
 INSERT INTO `likes_post` (`id_like`, `id_post`, `id_usuario`, `fecha_like`) VALUES
 (39, 2, 26, '2025-07-18 03:27:29'),
 (41, 6, 26, '2025-07-18 03:32:33'),
-(46, 3, 26, '2025-07-18 16:33:10');
+(49, 9, 26, '2025-07-18 16:51:01'),
+(50, 1, 26, '2025-07-19 21:38:54'),
+(53, 8, 26, '2025-07-21 00:33:06'),
+(54, 3, 26, '2025-07-21 00:36:12'),
+(55, 1, 1, '2025-07-21 00:49:25'),
+(62, 16, 26, '2025-07-21 02:08:13');
 
 -- --------------------------------------------------------
 
@@ -127,10 +140,39 @@ INSERT INTO `likes_post` (`id_like`, `id_post`, `id_usuario`, `fecha_like`) VALU
 CREATE TABLE `notificaciones` (
   `id_notificacion` int(11) NOT NULL,
   `id_usuario_destino` int(11) NOT NULL,
+  `id_usuario_origen` int(11) NOT NULL,
   `mensaje` text NOT NULL,
   `leido` tinyint(1) DEFAULT 0,
   `fecha_envio` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario_destino`, `id_usuario_origen`, `mensaje`, `leido`, `fecha_envio`) VALUES
+(8, 1, 0, 'Alguien le dio Me gusta a tu publicación: \"nuevaaaaaaaaaaaaaaaaaaaaaaaaaaa\"', 1, '2025-07-21 00:36:12'),
+(9, 1, 0, 'Alguien comentó tu publicación: \"publicacion de prueba franco\"', 1, '2025-07-21 00:45:30'),
+(10, 1, 0, 'Alguien le dio Me gusta a tu publicación: \"Prueba de notifiaciones \"', 1, '2025-07-21 00:51:02'),
+(11, 1, 0, 'Alguien comentó tu publicación: \"Prueba de notifiaciones \"', 1, '2025-07-21 00:51:15'),
+(12, 31, 0, 'Alguien respondió a tu comentario en el post: \"Prueba de notifiaciones \"', 1, '2025-07-21 00:53:55'),
+(13, 1, 0, 'Alguien respondió a tu comentario en el post: \"Prueba de notifiaciones \"', 1, '2025-07-21 00:54:38'),
+(14, 1, 0, 'Alguien le dio Me gusta a tu publicación: \"Prueba de notifiaciones \"', 1, '2025-07-21 00:56:51'),
+(15, 1, 0, 'Alguien comentó tu publicación: \"Prueba de notifiaciones \"', 1, '2025-07-21 00:57:00'),
+(16, 1, 0, 'Alguien comentó tu publicación: \"Prueba de notifiaciones \"', 1, '2025-07-21 01:11:11'),
+(17, 26, 0, 'Alguien respondió a tu comentario en el post: \"Prueba de notifiaciones \"', 1, '2025-07-21 01:16:02'),
+(18, 1, 0, 'Alguien comentó tu publicación: \"Prueba de notifiaciones \"', 0, '2025-07-21 01:47:12'),
+(19, 1, 0, 'Alguien le dio Me gusta a tu publicación: \"Prueba de notifiaciones \"', 0, '2025-07-21 01:47:35'),
+(20, 1, 0, 'Alguien le dio Me gusta a tu publicación: \"Gano River 3 a 1 \"', 0, '2025-07-21 01:53:31'),
+(21, 1, 0, 'Alguien comentó tu publicación: \"Gano River 3 a 1 \"', 0, '2025-07-21 01:53:38'),
+(22, 1, 0, 'Alguien le dio Me gusta a tu publicación: \"ChatGPT ¿Es bueno o malo?\"', 0, '2025-07-21 01:56:22'),
+(23, 1, 0, 'Alguien comentó tu publicación: \"ChatGPT ¿Es bueno o malo?\"', 0, '2025-07-21 01:56:28'),
+(24, 1, 26, 'Alguien le dio Me gusta a tu publicación: \"ChatGPT ¿Es bueno o malo?\"', 1, '2025-07-21 02:00:44'),
+(25, 1, 26, 'Alguien comentó tu publicación: \"ChatGPT ¿Es bueno o malo?\"', 1, '2025-07-21 02:00:51'),
+(26, 26, 1, 'Alguien respondió a tu comentario en el post: \"ChatGPT ¿Es bueno o malo?\"', 1, '2025-07-21 02:03:32'),
+(27, 1, 26, 'Alguien le dio Me gusta a tu publicación: \"ChatGPT ¿Es bueno o malo?\"', 1, '2025-07-21 02:08:13'),
+(28, 1, 26, 'Alguien comentó tu publicación: \"ChatGPT ¿Es bueno o malo?\"', 1, '2025-07-21 02:08:17'),
+(29, 26, 1, ' respondió a tu comentario en el post: \"ChatGPT ¿Es bueno o malo?\"', 0, '2025-07-21 02:13:53');
 
 -- --------------------------------------------------------
 
@@ -184,7 +226,8 @@ INSERT INTO `posts` (`id_post`, `titulo`, `contenido`, `fecha_creacion`, `id_usu
 (8, '23829u39239', 'h23uiehiwehiwei9ihni32ninsd', '2025-07-15 23:47:33', 1, 4, NULL, 'publicado'),
 (9, 'noti32234232332', 'ksanknsd ksdkfksda fm sdkf sd flsd', '2025-07-16 00:11:56', 26, 6, NULL, 'publicado'),
 (10, 'prueba de entrenenimiento', 'JSHJDFBDSAUBJSDNBJDSA', '2025-07-17 23:10:39', 26, 1, NULL, 'publicado'),
-(11, 'drhfdbfhfhffh999999', 'asfsfsdfdsfs', '2025-07-17 23:29:53', 1, 1, NULL, 'publicado');
+(11, 'drhfdbfhfhffh999999', 'asfsfsdfdsfs', '2025-07-17 23:29:53', 1, 1, NULL, 'publicado'),
+(16, 'ChatGPT ¿Es bueno o malo?', 'saafsdfadsfsdfsda', '2025-07-21 02:07:49', 1, 11, NULL, 'publicado');
 
 -- --------------------------------------------------------
 
@@ -236,17 +279,23 @@ CREATE TABLE `visitas_post` (
 
 INSERT INTO `visitas_post` (`id_visita`, `id_post`, `id_usuario`, `fecha_visita`) VALUES
 (2, 3, 1, '2025-07-18 02:11:54'),
-(5, 3, 26, '2025-07-18 16:34:39'),
-(22, 8, 26, '2025-07-18 16:35:01'),
-(24, 2, 26, '2025-07-18 03:31:25'),
-(25, 10, 26, '2025-07-17 23:10:47'),
+(5, 3, 26, '2025-07-21 00:36:11'),
+(22, 8, 26, '2025-07-21 00:33:04'),
+(24, 2, 26, '2025-07-19 22:50:18'),
+(25, 10, 26, '2025-07-21 00:45:42'),
 (26, 9, 1, '2025-07-17 23:16:39'),
-(27, 2, 1, '2025-07-17 23:26:47'),
+(27, 2, 1, '2025-07-20 22:26:09'),
 (29, 8, 1, '2025-07-17 23:37:41'),
-(30, 11, 26, '2025-07-18 01:38:46'),
-(34, 1, 26, '2025-07-18 02:49:11'),
+(30, 11, 26, '2025-07-20 23:19:05'),
+(34, 1, 26, '2025-07-21 00:45:59'),
 (61, 6, 26, '2025-07-18 03:32:30'),
-(62, 9, 26, '2025-07-18 03:32:45');
+(62, 9, 26, '2025-07-18 16:50:48'),
+(77, 4, 26, '2025-07-19 22:49:31'),
+(88, 11, 1, '2025-07-20 22:25:55'),
+(94, 11, 31, '2025-07-20 23:30:54'),
+(99, 1, 1, '2025-07-21 00:49:21'),
+(112, 16, 26, '2025-07-21 02:08:10'),
+(113, 16, 1, '2025-07-21 02:13:45');
 
 --
 -- Índices para tablas volcadas
@@ -319,25 +368,25 @@ ALTER TABLE `visitas_post`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
-  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT de la tabla `likes_post`
 --
 ALTER TABLE `likes_post`
-  MODIFY `id_like` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id_like` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `password_resets`
@@ -349,7 +398,7 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT de la tabla `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id_post` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_post` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -361,7 +410,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `visitas_post`
 --
 ALTER TABLE `visitas_post`
-  MODIFY `id_visita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id_visita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- Restricciones para tablas volcadas

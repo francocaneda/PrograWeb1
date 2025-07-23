@@ -23,6 +23,8 @@ spl_autoload_register(
     }
 );
 
+
+
 use \Firebase\JWT\JWT;
 
 require_once 'config_db.php';
@@ -39,11 +41,28 @@ if (count($parametros) >0 && $metodo == 'get') {
     $funcionNombre = $funcionNombre.'ConParametros';
 }
 
+
 if (function_exists($funcionNombre)) {
     call_user_func_array($funcionNombre, $parametros);
 } else {
     header(' ', true, 400);
 }
+
+// GET
+if ($metodo === 'get' && $comandos[0] === 'getnotificaciones') {
+    getNotificaciones();
+}
+
+// PATCH
+if ($metodo === 'patch' && $comandos[0] === 'patchnotificaciones') {
+    patchNotificaciones();
+}
+
+if ($metodo === 'post' && $comandos[0] === 'updateusuario') {
+    postupdateUsuario();
+    exit();
+}
+
 
 // ----------------- FUNCIONES DE SOPORTE ------------------
 
@@ -189,6 +208,11 @@ function postUploadavatar()
     output(['ruta' => $rutaFinal]);
 }
 
+////// Update usuario /////
+
+
+
+
 
 
 function postLogin()
@@ -252,7 +276,6 @@ function patchLogin()
 
 function postUsuarios()
 {
-    $db = conectarBD();
     $db = conectarBD();
 
     // Obtener datos desde $_POST (vienen de FormData)
@@ -329,6 +352,80 @@ $sql = "INSERT INTO usuarios (user_nameweb, email, clave, nombre_completo, avata
 
     output(['id' => $id]);
 }
+
+///// Update de Usuario
+
+function postupdateUsuario() {
+    $db = conectarBD();
+
+    // Tomar los datos enviados
+    $id = $_POST['id'] ?? null;
+    $userName = $_POST['userName'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $fechaNacimiento = $_POST['fechaNacimiento'] ?? '';
+    $bio = $_POST['bio'] ?? '';
+    $avatar = $_FILES['avatar'] ?? null;
+
+    // Validaciones básicas 
+    if (empty($userName) || empty($id) || empty($email) || empty($fechaNacimiento)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Faltan datos obligatorios']);
+        exit();
+    }
+
+    // Manejo del avatar (si se subió archivo)
+    $avatarPath = null;
+    if ($avatar && $avatar['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = __DIR__ . '/uploads/';
+        $fileName = basename($avatar['name']);
+        $targetFilePath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($avatar['tmp_name'], $targetFilePath)) {
+            $avatarPath = 'uploads/' . $fileName;  // Ruta relativa para BD y frontend
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al subir el avatar']);
+            exit();
+        }
+    }
+
+    // Escapar variables
+    $idEscaped = mysqli_real_escape_string($db, $id);
+    $userNameEscaped = mysqli_real_escape_string($db, $userName);
+    $emailEscaped = mysqli_real_escape_string($db, $email);
+    $fechaNacimientoEscaped = mysqli_real_escape_string($db, $fechaNacimiento);
+    $bioEscaped = mysqli_real_escape_string($db, $bio);
+
+    // Preparar consulta SQL con user_nameweb incluido
+    $sql = "UPDATE usuarios SET 
+        user_nameweb = '$userNameEscaped',
+        email = '$emailEscaped',
+        fecha_nacimiento = '$fechaNacimientoEscaped',
+        bio = '$bioEscaped'";
+
+    if ($avatarPath !== null) {
+        $avatarPathEscaped = mysqli_real_escape_string($db, $avatarPath);
+        $sql .= ", avatar = '$avatarPathEscaped'";
+    }
+
+    $sql .= " WHERE id = '$idEscaped'";
+
+    if (mysqli_query($db, $sql)) {
+        mysqli_close($db);
+        echo json_encode(['ok' => true]);
+        exit();
+    } else {
+        $error = mysqli_error($db);
+        mysqli_close($db);
+        http_response_code(500);
+        echo json_encode(['error' => 'Error al actualizar usuario: ' . $error]);
+        exit();
+    }
+}
+
+
+
+
 
 // Obtener usuarios
 
@@ -734,6 +831,44 @@ function postComentarios() {
         output(['error' => 'Error al insertar comentario', 'detalle' => mysqli_error($db)], 500);
     }
 
+    // Obtener autor del post para notificación
+    $sqlAutorPost = "SELECT id_usuario, titulo FROM posts WHERE id_post = $id_post";
+    $resAutorPost = mysqli_query($db, $sqlAutorPost);
+    $id_usuario_destino = 0;
+    $mensaje = "";
+
+    if ($resAutorPost && mysqli_num_rows($resAutorPost) > 0) {
+        $rowPost = mysqli_fetch_assoc($resAutorPost);
+        $id_usuario_destino_post = intval($rowPost['id_usuario']);
+        $titulo_post = $rowPost['titulo'];
+
+        if ($id_comentario_padre !== null) {
+            // Si es respuesta, notificar al autor del comentario padre
+            $sqlAutorComentario = "SELECT id_usuario FROM comentarios WHERE id_comentario = $id_comentario_padre";
+            $resAutorComentario = mysqli_query($db, $sqlAutorComentario);
+
+            if ($resAutorComentario && mysqli_num_rows($resAutorComentario) > 0) {
+                $rowComentario = mysqli_fetch_assoc($resAutorComentario);
+                $id_usuario_destino = intval($rowComentario['id_usuario']);
+                if ($id_usuario_destino !== $id_usuario) {
+                    $mensaje = " respondió a tu comentario en el post: \"$titulo_post\"";
+                }
+            }
+        } else {
+            // Si es comentario nuevo, notificar al autor del post si no es quien comenta
+            if ($id_usuario_destino_post !== $id_usuario) {
+                $id_usuario_destino = $id_usuario_destino_post;
+                $mensaje = " comentó tu publicación: \"$titulo_post\"";
+            }
+        }
+
+        // Insertar notificación si mensaje y destinatario existen
+        if ($id_usuario_destino !== 0 && !empty($mensaje)) {
+            $sqlNoti = "INSERT INTO notificaciones (id_usuario_destino, id_usuario_origen, mensaje) VALUES ($id_usuario_destino, $id_usuario, '".mysqli_real_escape_string($db, $mensaje)."')";
+            mysqli_query($db, $sqlNoti);
+        }
+    }
+
     mysqli_close($db);
     output(['mensaje' => 'Comentario guardado correctamente']);
 }
@@ -872,7 +1007,6 @@ function postLike_post() {
     $sqlCheck = "SELECT id_like FROM likes_post WHERE id_post = $id_post AND id_usuario = $id_usuario";
     $result = mysqli_query($db, $sqlCheck);
     if ($result && mysqli_num_rows($result) > 0) {
-        // Ya existe el like, devolver mensaje o error
         output(['mensaje' => 'Ya le diste like a este post']);
     }
 
@@ -883,9 +1017,27 @@ function postLike_post() {
         output(['error' => 'Error al dar like', 'detalle' => mysqli_error($db)], 500);
     }
 
+    // Obtener el autor del post para notificación
+    $sqlAutor = "SELECT id_usuario, titulo FROM posts WHERE id_post = $id_post";
+    $resAutor = mysqli_query($db, $sqlAutor);
+    if ($resAutor && mysqli_num_rows($resAutor) > 0) {
+        $row = mysqli_fetch_assoc($resAutor);
+        $id_usuario_destino = intval($row['id_usuario']);
+        $titulo_post = $row['titulo'];
+
+        // Evitar notificar si el usuario se da like a sí mismo
+        if ($id_usuario_destino !== $id_usuario) {
+            $mensaje = " le dio Me gusta a tu publicación: \"$titulo_post\"";
+
+            $sqlNoti = "INSERT INTO notificaciones (id_usuario_destino, id_usuario_origen, mensaje) VALUES ($id_usuario_destino, $id_usuario, '".mysqli_real_escape_string($db, $mensaje)."')";
+            mysqli_query($db, $sqlNoti);
+        }
+    }
+
     mysqli_close($db);
     output(['mensaje' => 'Like agregado']);
 }
+
 
 // Función para quitar like de un post
 function deleteLikePost() {
@@ -1074,4 +1226,226 @@ function getBuscarPosts() {
 
     $query = $_GET['query'];
     getBuscarPostsConParametros($query);
+}
+
+///////////////////////// NOTIFICACIONES /////////////////////////
+
+function getNotificaciones()
+{
+    $payload = requiereLogin();
+    $db = conectarBD();
+    $id_usuario = intval($payload->uid);
+
+$sql = "SELECT n.id_notificacion, n.mensaje, n.leido, n.fecha_envio, u.user_nameweb AS usuario_origen
+        FROM notificaciones n
+        JOIN usuarios u ON n.id_usuario_origen = u.id
+        WHERE n.id_usuario_destino = $id_usuario
+        ORDER BY n.fecha_envio DESC";
+
+    $result = mysqli_query($db, $sql);
+
+    if (!$result) {
+        output(['error' => 'Error al obtener notificaciones', 'detalle' => mysqli_error($db)], 500);
+    }
+
+    $notificaciones = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $notificaciones[] = $row;
+    }
+
+    mysqli_free_result($result);
+    mysqli_close($db);
+
+    output(['notificaciones' => $notificaciones]);
+}
+
+// Notificacion al comentar o dar like
+
+function postNotificaciones()
+{
+    $payload = requiereLogin();
+    $db = conectarBD();
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    $id_usuario_destino = intval($data['id_usuario_destino'] ?? 0);
+    $id_usuario_origen = intval($payload->uid); // Quien hace la acción
+    $tipo = mysqli_real_escape_string($db, $data['tipo'] ?? '');
+    $id_post = intval($data['id_post'] ?? 0);
+    $id_comentario = intval($data['id_comentario'] ?? 0);
+
+    if ($id_usuario_destino === 0 || empty($tipo)) {
+        output(['error' => 'Faltan datos para crear notificación'], 400);
+    }
+
+    // Obtener nombre usuario origen
+    $sqlUser = "SELECT user_nameweb FROM usuarios WHERE id = $id_usuario_origen LIMIT 1";
+    $resUser = mysqli_query($db, $sqlUser);
+    $userNameOrigen = '';
+    if ($resUser && mysqli_num_rows($resUser) > 0) {
+        $rowUser = mysqli_fetch_assoc($resUser);
+        $userNameOrigen = $rowUser['user_nameweb'];
+    } else {
+        // Si no se encuentra el usuario origen, retornar error para no crear notificación inválida
+        output(['error' => 'Usuario origen no encontrado'], 400);
+    }
+
+    // Construir mensaje según tipo de notificación
+    $mensaje = '';
+    if ($tipo === 'like_post') {
+        $sqlPost = "SELECT titulo FROM posts WHERE id_post = $id_post LIMIT 1";
+        $resPost = mysqli_query($db, $sqlPost);
+        $tituloPost = 'tu publicación';
+        if ($resPost && mysqli_num_rows($resPost) > 0) {
+            $rowPost = mysqli_fetch_assoc($resPost);
+            $tituloPost = $rowPost['titulo'];
+        }
+        $mensaje = "$userNameOrigen le dio Me gusta a tu publicación: \"$tituloPost\"";
+    } elseif ($tipo === 'comentario_post') {
+        $sqlPost = "SELECT titulo FROM posts WHERE id_post = $id_post LIMIT 1";
+        $resPost = mysqli_query($db, $sqlPost);
+        $tituloPost = 'tu publicación';
+        if ($resPost && mysqli_num_rows($resPost) > 0) {
+            $rowPost = mysqli_fetch_assoc($resPost);
+            $tituloPost = $rowPost['titulo'];
+        }
+        $mensaje = "$userNameOrigen comentó tu publicación: \"$tituloPost\"";
+    } elseif ($tipo === 'respuesta_comentario') {
+        $sqlPost = "SELECT titulo FROM posts WHERE id_post = $id_post LIMIT 1";
+        $resPost = mysqli_query($db, $sqlPost);
+        $tituloPost = 'tu publicación';
+        if ($resPost && mysqli_num_rows($resPost) > 0) {
+            $rowPost = mysqli_fetch_assoc($resPost);
+            $tituloPost = $rowPost['titulo'];
+        }
+        $mensaje = "$userNameOrigen respondió a tu comentario en el post: \"$tituloPost\"";
+    } else {
+        $mensaje = "Tienes una nueva notificación de $userNameOrigen";
+    }
+
+    $mensajeEsc = mysqli_real_escape_string($db, $mensaje);
+
+    // Inserción con id_usuario_origen para guardar quién generó la notificación
+    $sql = "INSERT INTO notificaciones (id_usuario_destino, id_usuario_origen, mensaje) 
+            VALUES ($id_usuario_destino, $id_usuario_origen, '$mensajeEsc')";
+
+    if (!mysqli_query($db, $sql)) {
+        output(['error' => 'Error al crear notificación', 'detalle' => mysqli_error($db)], 500);
+    }
+
+    $id = mysqli_insert_id($db);
+    mysqli_close($db);
+
+    output(['mensaje' => 'Notificación creada', 'id_notificacion' => $id]);
+}
+
+
+
+
+// Notificacion leida
+
+function patchNotificaciones()
+{
+    $payload = requiereLogin();
+    $db = conectarBD();
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    $id_notificacion = intval($data['id_notificacion'] ?? 0);
+
+    if ($id_notificacion === 0) {
+        output(['error' => 'Falta id_notificacion'], 400);
+    }
+
+    // Verificar que la notificación pertenezca al usuario
+    $sqlVerif = "SELECT id_usuario_destino FROM notificaciones WHERE id_notificacion = $id_notificacion";
+    $resVerif = mysqli_query($db, $sqlVerif);
+    if (!$resVerif || mysqli_num_rows($resVerif) === 0) {
+        output(['error' => 'Notificación no encontrada'], 404);
+    }
+
+    $row = mysqli_fetch_assoc($resVerif);
+    if (intval($row['id_usuario_destino']) !== intval($payload->uid)) {
+        outputError(401);
+    }
+
+    $sql = "UPDATE notificaciones SET leido = 1 WHERE id_notificacion = $id_notificacion";
+
+    if (!mysqli_query($db, $sql)) {
+        output(['error' => 'Error al actualizar notificación', 'detalle' => mysqli_error($db)], 500);
+    }
+
+    mysqli_close($db);
+
+    output(['mensaje' => 'Notificación marcada como leída']);
+}
+
+
+
+
+
+
+
+
+
+function postEliminarUsuario()
+{
+    $payload = requiereLogin();
+    $db = conectarBD();
+
+    // Solo admin puede eliminar usuarios
+    if ($payload->rol !== 'admin') {
+        output(['error' => 'Acceso denegado'], 403);
+    }
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    $id_usuario = intval($data['id_usuario'] ?? 0);
+
+    if ($id_usuario === 0) {
+        output(['error' => 'Falta id_usuario'], 400);
+    }
+
+    // Evitar que admin se elimine a sí mismo (opcional)
+    if ($id_usuario === intval($payload->uid)) {
+        output(['error' => 'No podés eliminar tu propio usuario'], 400);
+    }
+
+    // Verificar si el usuario existe
+    $sqlCheck = "SELECT id FROM usuarios WHERE id = $id_usuario LIMIT 1";
+    $resCheck = mysqli_query($db, $sqlCheck);
+    if (!$resCheck || mysqli_num_rows($resCheck) === 0) {
+        output(['error' => 'Usuario no encontrado'], 404);
+    }
+
+    // Eliminar usuario
+    $sqlDelete = "DELETE FROM usuarios WHERE id = $id_usuario";
+    if (!mysqli_query($db, $sqlDelete)) {
+        output(['error' => 'Error al eliminar usuario', 'detalle' => mysqli_error($db)], 500);
+    }
+
+    mysqli_close($db);
+
+    output(['mensaje' => 'Usuario eliminado correctamente']);
+}
+
+
+function getGetUsuarios()
+{
+    $db = conectarBD();
+    $sql = "SELECT id, user_nameweb, email, nombre_completo, avatar, fecha_nacimiento, bio, rol, fecha_registro FROM usuarios";
+    $result = mysqli_query($db, $sql);
+
+    if ($result === false) {
+        outputError(500);
+    }
+
+
+
+    $usuarios = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $usuarios[] = $row;
+
+    }
+    mysqli_free_result($result);
+    mysqli_close($db);
+
+    output(['usuarios' => $usuarios]);
 }

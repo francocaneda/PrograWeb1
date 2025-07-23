@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../user.service';
+import { AuthService } from '../auth.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-index-foro',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
   templateUrl: './index-foro.component.html',
   styleUrl: './index-foro.component.css'
 })
@@ -30,7 +32,7 @@ export class IndexForoComponent implements OnInit {
 
   estaLogueado: boolean = false;  // <-- NUEVA propiedad
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private authService: AuthService) {}
 
   ngOnInit(): void {
     // Usuario logueado
@@ -122,4 +124,9 @@ export class IndexForoComponent implements OnInit {
     const form = event.target as HTMLFormElement;
     form.reset();
   }
+
+  esAdmin(): boolean {
+  return this.authService.getRol() === 'admin';
+}
+
 }
