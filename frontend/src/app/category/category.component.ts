@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { routes } from '../app.routes';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-category',
@@ -87,18 +88,27 @@ export class CategoryComponent implements OnInit {
     this.router.navigate(['/main-layout/categorias', id]);
   }
 
-  eliminarCategoria(id_categoria: number) {
-  if (!confirm('¿Estás seguro que deseas eliminar esta categoría? Esta acción no se puede deshacer.')) {
-    return;
-  }
-
-  this.categoryService.eliminarCategoria(id_categoria).subscribe({
-    next: () => {
-      this.cargarCategorias(); // refrescar lista
-    },
-    error: (err) => {
-      console.error('Error al eliminar categoría', err);
-      alert('No se pudo eliminar la categoría. Intenta nuevamente.');
+eliminarCategoria(id_categoria: number) {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.categoryService.eliminarCategoria(id_categoria).subscribe({
+        next: () => {
+          this.cargarCategorias(); // refrescar lista
+          Swal.fire('Eliminada', 'La categoría fue eliminada exitosamente.', 'success');
+        },
+        error: (err) => {
+          console.error('Error al eliminar categoría', err);
+          Swal.fire('Error', 'No se pudo eliminar la categoría. Intenta nuevamente.', 'error');
+        }
+      });
     }
   });
 }

@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { UserService } from '../user.service';
 import { LikeService } from '../likes.service';
 import { es } from 'date-fns/locale';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -173,18 +174,29 @@ toggleLike(): void {
     return diferencia.charAt(0).toUpperCase() + diferencia.slice(1); // Capitaliza la primera letra
   }
 
-  eliminarComentario(id_comentario: number): void {
-    if (!confirm('¿Estás seguro que deseas eliminar este comentario?')) return;
-
-    this.commentService.eliminarComentario(id_comentario).subscribe({
-      next: () => {
-        this.cargarComentarios(this.post.id_post);
-      },
-      error: (err) => {
-        console.error('Error al eliminar comentario', err);
-        alert('No se pudo eliminar el comentario.');
-      }
-    });
-  }
+eliminarComentario(id_comentario: number): void {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Deseas eliminar este comentario?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.commentService.eliminarComentario(id_comentario).subscribe({
+        next: () => {
+          this.cargarComentarios(this.post.id_post);
+          Swal.fire('Eliminado', 'El comentario fue eliminado correctamente.', 'success');
+        },
+        error: (err) => {
+          console.error('Error al eliminar comentario', err);
+          Swal.fire('Error', 'No se pudo eliminar el comentario.', 'error');
+        }
+      });
+    }
+  });
+}
 }
 
